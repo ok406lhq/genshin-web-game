@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原神 Web版 - 璃月港探险</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 加载界面 -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="genshin-logo">原神 Web版</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">正在加载资源...</p>
+        </div>
+    </div>
+
+    <!-- 主界面 -->
+    <div id="main-menu" class="screen main-menu">
+        <div class="stars-bg"></div>
+        <div class="main-content">
+            <h1 class="game-title">原神 Web版</h1>
+            <div class="menu-buttons">
+                <button class="menu-btn" onclick="showScreen('character-screen')">角色</button>
+                <button class="menu-btn" onclick="showScreen('adventure-screen')">冒险</button>
+                <button class="menu-btn" onclick="showScreen('gacha-screen')">祈愿</button>
+                <button class="menu-btn" onclick="showScreen('inventory-screen')">背包</button>
+            </div>
+            <div class="player-info">
+                <div class="player-level">冒险等阶: <span id="player-level">1</span></div>
+                <div class="resources">
+                    <div class="resource">
+                        <span class="resource-icon">⭐</span>
+                        <span id="primogems">1600</span>
+                    </div>
+                    <div class="resource">
+                        <span class="resource-icon">💰</span>
+                        <span id="mora">50000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 角色界面 -->
+    <div id="character-screen" class="screen character-screen hidden">
+        <div class="screen-header">
+            <h2>角色</h2>
+            <button class="back-btn" onclick="showScreen('main-menu')">返回</button>
+        </div>
+        <div class="character-content">
+            <div class="character-list">
+                <div id="character-cards"></div>
+            </div>
+            <div class="character-details">
+                <div id="selected-character" class="character-detail-card">
+                    <p>选择一个角色查看详情</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 冒险界面 -->
+    <div id="adventure-screen" class="screen adventure-screen hidden">
+        <div class="screen-header">
+            <h2>冒险</h2>
+            <button class="back-btn" onclick="showScreen('main-menu')">返回</button>
+        </div>
+        <div class="adventure-content">
+            <div class="map-area">
+                <div class="location-card" onclick="startBattle('hilichurl')">
+                    <h3>🏕️ 丘丘人营地</h3>
+                    <p>等级: 1-5</p>
+                    <p>奖励: 摩拉, 经验</p>
+                </div>
+                <div class="location-card" onclick="startBattle('slime')">
+                    <h3>🌊 史莱姆聚集地</h3>
+                    <p>等级: 3-8</p>
+                    <p>奖励: 素材, 摩拉</p>
+                </div>
+                <div class="location-card" onclick="startBattle('treasure')">
+                    <h3>💎 神秘宝藏</h3>
+                    <p>等级: 5-10</p>
+                    <p>奖励: 原石, 武器</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 战斗界面 -->
+    <div id="battle-screen" class="screen battle-screen hidden">
+        <div class="battle-ui">
+            <div class="enemy-area">
+                <div id="enemy-sprite" class="enemy-sprite"></div>
+                <div class="enemy-info">
+                    <div id="enemy-name" class="enemy-name"></div>
+                    <div class="health-bar">
+                        <div id="enemy-health" class="health-fill"></div>
+                    </div>
+                    <div id="enemy-hp-text" class="hp-text">100/100</div>
+                </div>
+            </div>
+            
+            <div class="battle-log">
+                <div id="battle-messages"></div>
+            </div>
+            
+            <div class="player-area">
+                <div class="character-battle-info">
+                    <div id="current-character" class="current-character">
+                        <div class="character-avatar"></div>
+                        <div class="character-stats">
+                            <div class="character-name">旅行者</div>
+                            <div class="health-bar">
+                                <div id="player-health" class="health-fill"></div>
+                            </div>
+                            <div id="player-hp-text" class="hp-text">100/100</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="battle-actions">
+                    <button id="attack-btn" class="action-btn attack-btn" onclick="playerAttack()">⚔️ 攻击</button>
+                    <button id="skill-btn" class="action-btn skill-btn" onclick="playerSkill()">🌟 技能</button>
+                    <button id="flee-btn" class="action-btn flee-btn" onclick="fleeBattle()">🏃 逃跑</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 祈愿界面 -->
+    <div id="gacha-screen" class="screen gacha-screen hidden">
+        <div class="screen-header">
+            <h2>祈愿</h2>
+            <button class="back-btn" onclick="showScreen('main-menu')">返回</button>
+        </div>
+        <div class="gacha-content">
+            <div class="gacha-banner">
+                <h3>角色祈愿</h3>
+                <p>获得强力角色的机会！</p>
+                <div class="gacha-buttons">
+                    <button class="gacha-btn" onclick="performGacha(1)">
+                        <span>单抽</span>
+                        <div class="cost">160 ⭐</div>
+                    </button>
+                    <button class="gacha-btn" onclick="performGacha(10)">
+                        <span>十连抽</span>
+                        <div class="cost">1600 ⭐</div>
+                    </button>
+                </div>
+            </div>
+            <div id="gacha-results" class="gacha-results hidden">
+                <h3>祈愿结果</h3>
+                <div id="gacha-items"></div>
+                <button class="gacha-btn" onclick="closeGachaResults()">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 背包界面 -->
+    <div id="inventory-screen" class="screen inventory-screen hidden">
+        <div class="screen-header">
+            <h2>背包</h2>
+            <button class="back-btn" onclick="showScreen('main-menu')">返回</button>
+        </div>
+        <div class="inventory-content">
+            <div class="inventory-tabs">
+                <button class="tab-btn active" onclick="showInventoryTab('weapons')">武器</button>
+                <button class="tab-btn" onclick="showInventoryTab('materials')">素材</button>
+            </div>
+            <div id="inventory-items" class="inventory-grid">
+                <!-- 物品将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 伤害数字显示 -->
+    <div id="damage-numbers"></div>
+
+    <!-- 通知系统 -->
+    <div id="notifications"></div>
+
+    <script src="game.js"></script>
+</body>
+</html>
